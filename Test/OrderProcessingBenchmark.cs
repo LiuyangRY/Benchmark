@@ -5,11 +5,12 @@ using Hys.Constants.Enums;
 using Hys.Protocols.OutDtos.Order;
 using System.Linq;
 
+[MemoryDiagnoser]
 public class OrderProcessingBenchmark
 {
     public PagedList<ClientOrderListOutDto> OrderList { get; set; }
 
-    [Params(1000, 10000, 100000)]
+    [Params(1000, 10000)]
     public int OrderCount { get; set; }
 
     public OrderProcessingBenchmark()
