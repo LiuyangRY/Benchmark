@@ -60,5 +60,18 @@ namespace BenchMark.LinqTest
                 doctorInfoDictionary.TryGetValue(id, out var doctorInfo);
             }
         }
+        
+        [Benchmark]
+        public void FirstOrDefaultSingleTest()
+        {
+            var doctorInfo = DoctorInfos.FirstOrDefault(doctor => doctor.Id == DoctorIds[DoctorIds.Count - 1]);
+        }
+
+        [Benchmark]
+        public void DictionaryFindSingleTest()
+        {
+            var doctorInfoDictionary = DoctorInfos.ToDictionary(doctor => doctor.Id);
+            doctorInfoDictionary.TryGetValue(DoctorIds[DoctorIds.Count - 1], out var doctorInfo);
+        }
     }
 }
