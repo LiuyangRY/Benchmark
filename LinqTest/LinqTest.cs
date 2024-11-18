@@ -1,54 +1,64 @@
-using BenchMark.Model.Enum;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
+using Hys.Protocols.Dtos;
 
 namespace BenchMark.LinqTest
 {
     /// <summary>
-    /// 类型转换测试
+    /// Linq测试
     /// </summary>
     [MemoryDiagnoser] 
     [Orderer(summaryOrderPolicy: SummaryOrderPolicy.FastestToSlowest)]
     [RankColumn]
     public class LinqTest
     {
-        public static void Test()
+        /// <summary>
+        /// 100个元素的情况下：使用字典比遍历查询快约30倍，内存占用少分配约4倍内存； 
+        /// 1000个元素的情况下：使用字典比遍历查询快约220倍，内存占用少分配约4倍内存；
+        /// 10000个元素的情况下：使用字典比遍历查询快约1300倍，内存占用少分配约4.5倍内存；
+        /// </summary>
+        [Params(100, 1000, 10000)]
+        public int DoctorIdCount = 10;
+
+        public List<long> DoctorIds { get; set; }
+
+        public List<DoctorInfoDto> DoctorInfos { get; set; }
+
+        public LinqTest()
         {
-            var aList = new List<ClassA>()
-            {
-                new ClassA() { Id = 1 },
-                new ClassA() { Id = 2 },
-                new ClassA() { Id = 3 },
-                new ClassA() { Id = 4 },
-            };
-            var bList = new List<ClassB>()
-            {
-                new ClassB { Id = 1, AId = 1, Status = EnumValue.Type1 }
-            };
-            var result = (from a in aList
-                join b in bList on a.Id equals b.AId into tempList
-                from temp in tempList.DefaultIfEmpty()
-                select new ClassB()
-                {
-                    Id = temp?.Id ?? 0,
-                    AId = temp?.AId ?? 0,
-                    Status = temp?.Status ?? EnumValue.Type2,
-                }
-            ).ToList();
+            DoctorIds = new List<long>();
+            DoctorInfos = new List<DoctorInfoDto>();
         }
-    }    
-    
-    public class ClassA
-    {
-        public int Id { get; set; }
-    }
 
-    public class ClassB
-    {
-        public int Id { get; set; }
+        [GlobalSetup]
+        public void GlobalSetup()
+        {
+            DoctorIds = new List<long>(DoctorIdCount);
+            DoctorInfos = new List<DoctorInfoDto>(DoctorIdCount);
+            foreach(var id in Enumerable.Range(1, DoctorIdCount))
+            {
+                DoctorIds.Add(id);
+                DoctorInfos.Add(new DoctorInfoDto() { Id = id, Name = $"医生{id}" });
+            };
+        }
+        
+        [Benchmark]
+        public void FirstOrDefaultTest()
+        {
+            foreach (var id in DoctorIds)
+            {
+                var doctorInfo = DoctorInfos.FirstOrDefault(doctor => doctor.Id == id);
+            }
+        }
 
-        public int AId { get; set; }
-
-        public EnumValue Status { get; set; }
+        [Benchmark]
+        public void DictionaryFindTest()
+        {
+            var doctorInfoDictionary = DoctorInfos.ToDictionary(doctor => doctor.Id);
+            foreach (var id in DoctorIds)
+            {
+                doctorInfoDictionary.TryGetValue(id, out var doctorInfo);
+            }
+        }
     }
 }

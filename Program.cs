@@ -1,3 +1,4 @@
-﻿using BenchmarkDotNet.Running;
+﻿using BenchMark.LinqTest;
+using BenchmarkDotNet.Running;
 
-BenchmarkRunner.Run<OrderProcessingBenchmark>();
+BenchmarkRunner.Run<LinqTest>();

@@ -13,11 +13,11 @@ namespace BenchMark.LinqTest
     [RankColumn]
     public class TabooOptimizeTest
     {
-        private int SearchCommodityIdCount = 10;
+        private readonly int SearchCommodityIdCount = 10;
 
-        private int TabooCount = 10;
+        private readonly int TabooCount = 10;
 
-        private int CommodityCount = 100;
+        private readonly int CommodityCount = 100;
 
         public required List<Commodity> Commodities { get; set; }
 
