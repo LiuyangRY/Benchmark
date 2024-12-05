@@ -1,4 +1,4 @@
-﻿using BenchMark.LinqTest;
+﻿using BenchMark.ThreadTest;
 using BenchmarkDotNet.Running;
 
-BenchmarkRunner.Run<LinqTest>();
+BenchmarkRunner.Run<ThreadTest>();

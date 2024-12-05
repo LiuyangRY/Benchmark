@@ -18,7 +18,7 @@ namespace BenchMark.LinqTest
         /// 10000个元素的情况下：使用字典比遍历查询快约1300倍，内存占用少分配约4.5倍内存；
         /// </summary>
         [Params(100, 1000, 10000)]
-        public int DoctorIdCount = 10;
+        public int DoctorIdCount;
 
         public List<long> DoctorIds { get; set; }
 
