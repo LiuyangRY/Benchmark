@@ -11,8 +11,4 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\hys.zkorder\src\Hys.Protocols\Hys.Protocols.csproj" />
-  </ItemGroup>
-
 </Project>
