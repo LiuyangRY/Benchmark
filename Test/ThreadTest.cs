@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
 
-namespace BenchMark.ThreadTest;
+namespace BenchMark.Test;
 
 /// <summary>
 /// Thread测试
@@ -16,16 +16,16 @@ public class ThreadTest
     /// </summary>
     [Params(10, 100, 1000, 10000)] public int ContentCount;
 
-    private List<int> Contents { get; init; }
+    private List<int>? Contents { get; set; }
 
     public ThreadTest()
     {
-        Contents = new List<int>(ContentCount);
     }
 
     [GlobalSetup]
     public void GlobalSetup()
     {
+        Contents = new List<int>(ContentCount);
         for (int i = 0; i < ContentCount; i++)
         {
             Contents.Add(i);
@@ -37,7 +37,7 @@ public class ThreadTest
     {
         var totalHeight = 0;
         var tasks = new List<Task>();
-        foreach (var content in Contents)
+        foreach (var content in Contents!)
         {
             tasks.Add(Task.Run(async () =>
             {
@@ -54,8 +54,8 @@ public class ThreadTest
     public async Task<int> ParallelForEachAsyncTest()
     {
         var heights = new int[ContentCount];
-        await Parallel.ForEachAsync(Contents,
-            async (i, token) => { heights[i] = await CalculateContentHeightAsync(i); });
+        await Parallel.ForEachAsync(Contents!.Select((content, index) => (content, index)),
+            async (item, token) => { heights[item.index] = await CalculateContentHeightAsync(item.content); });
         return heights.Sum();
     }
 
